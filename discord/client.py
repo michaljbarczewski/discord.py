@@ -1687,6 +1687,32 @@ class Client:
         yield from self.http.patch(url, json=payload, bucket='move_channel')
 
     @asyncio.coroutine
+    def move_channels(self, server, channels):
+        """|coro|
+
+        Move channels to positions in the list
+
+        Parameters
+        -----------
+        server : :class:`Server`
+            The server to move channels on.
+        channels : :class:`List[Channel]`
+            The channel to change positions of.
+
+        Raises
+        -------
+        Forbidden
+            You do not have permissions to change channel order.
+        HTTPException
+            If moving the channel failed, or you are of too low rank to move the channel.
+        """
+
+        url = '{0}/{1.server.id}/channels'.format(endpoints.SERVERS, server)
+
+        payload = [{'id': c.id, 'position': index} for index, c in enumerate(channels)]
+        yield from self.http.patch(url, json=payload, bucket='move_channel')
+
+    @asyncio.coroutine
     def create_channel(self, server, name, *overwrites, type=None):
         """|coro|
 
